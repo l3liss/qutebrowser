@@ -1,4 +1,12 @@
+import os
+import subprocess
 import dracula.draw
+from qutebrowser.api import interceptor
+
+config.load_autoconfig(False)
+
+config.unbind('u'),
+config.unbind('q'),
 
 dracula.draw.blood(c, {
     'spacing': {
@@ -7,12 +15,17 @@ dracula.draw.blood(c, {
     }
 })
 
-config.set('content.cookies.accept', 'all', 'chrome-devtools://*')
-config.set('content.cookies.accept', 'all', 'devtools://*')
-config.set('content.images', True, 'chrome-devtools://*')
-config.set('content.images', True, 'devtools://*')
-config.set('content.javascript.enabled', True, 'chrome-devtools://*')
-config.set('content.javascript.enabled', True, 'devtools://*')
-config.set('content.javascript.enabled', True, 'chrome://*/*')
-config.set('content.javascript.enabled', True, 'qute://*/*')
+def filter_yt(info: interceptor.Request):
+    """Block the given request if necessary."""
+    url = info.request_url
+    if (
+        url.host() == "www.youtube.com"
+        and url.path() == "/get_video_info"
+        and "&adformat=" in url.query()
+    ):
+        info.block()
+
+interceptor.register(filter_yt)
+
+config.set('content.autoplay', False, '*://*/*'),
 config.set('content.notifications', False, '*://*/*')
