@@ -4,6 +4,7 @@ import dracula.draw
 from qutebrowser.api import interceptor
 
 config.load_autoconfig(False)
+config.set('colors.webpage.darkmode.enabled', True)
 
 config.unbind('u'),
 config.unbind('q'),
